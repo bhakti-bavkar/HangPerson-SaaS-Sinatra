@@ -25,10 +25,10 @@ class HangpersonGame
   def check_win_or_lose
     all_letters_found = true
     (@word.size).times {|i| all_letters_found = false unless @guesses.include? @word[i] }
-    total_attempts = @guesses.size + @wrong_guesses.size
-    return :win  if all_letters_found == true and total_attempts <= 7
-    return :play if all_letters_found == false and total_attempts < 7
-    return :lose if all_letters_found == false and total_attempts >= 7
+    #total_attempts = @guesses.size + @wrong_guesses.size
+    return :win  if all_letters_found == true and @wrong_guesses.size <= 7
+    return :play if all_letters_found == false and @wrong_guesses.size < 7
+    return :lose if all_letters_found == false and @wrong_guesses.size >= 7
   end
   
   def word_with_guesses
