@@ -19,12 +19,12 @@ class HangpersonGame
     raise ArgumentError if (/\W|[0-9]|[_]/).match(char) or char == '' or char.nil?
     char = char.downcase
     return false if (@guesses.include?char or @wrong_guesses.include? char)
-    (word.include? char) ? @guesses << char : @wrong_guesses << char
+    (@word.include? char) ? @guesses << char : @wrong_guesses << char
   end
   
   def check_win_or_lose
     all_letters_found = true
-    (word.size).times {|i| all_letters_found = false if not(@guesses.include? word[i]) }
+    (@word.size).times {|i| all_letters_found = false unless @guesses.include? @word[i] }
     total_attempts = @guesses.size + @wrong_guesses.size
     return :win  if all_letters_found == true and total_attempts <= 7
     return :play if all_letters_found == false and total_attempts < 7
@@ -33,12 +33,17 @@ class HangpersonGame
   
   def word_with_guesses
     guessed_word = ''
-    (word.size).times { guessed_word << '-' }
+    (@word.size).times { guessed_word << '-' }
     (@guesses.size).times do |i|
       index_found = 0
-      while index_found < word.size do
-        index_found = word.index(@guesses[i])
-        guessed_word[index_found] = @guesses[i] if not(index_found.nil?)
+      while index_found < @word.size do
+        index_found = @word.index(@guesses[i],index_found)
+        if index_found.nil?
+          break
+        else
+          guessed_word[index_found] = @guesses[i] 
+          index_found += 1
+        end
       end
     end
     guessed_word
