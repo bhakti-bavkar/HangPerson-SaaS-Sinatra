@@ -13,6 +13,7 @@ class HangpersonApp < Sinatra::Base
   
   after do
     session[:game] = @game
+    session[:result] = nil
   end
   
   # These two routes are good examples of Sinatra syntax
@@ -55,6 +56,7 @@ class HangpersonApp < Sinatra::Base
   # wrong_guesses and word_with_guesses from @game.
   get '/show' do
     result = @game.check_win_or_lose
+    session[:result] = result 
     case result
     when :play; erb :show
     when :win ; erb :win
@@ -64,13 +66,19 @@ class HangpersonApp < Sinatra::Base
   end
   
   get '/win' do
-    ### YOUR CODE HERE ###
-    erb :win # You may change/remove this line
+    if session[:result] == :win
+      erb :win 
+    else
+      erb :new
+    end
   end
   
   get '/lose' do
-    ### YOUR CODE HERE ###
-    erb :lose # You may change/remove this line
+    if session[:result] == :lose
+      erb :lose 
+    else
+      erb :new
+    end 
   end
   
 end
