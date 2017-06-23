@@ -8,12 +8,13 @@ class HangpersonApp < Sinatra::Base
   register Sinatra::Flash
   
   before do
-    @game = session[:game] || HangpersonGame.new('')
+    @game   = session[:game] || HangpersonGame.new('')
+    @result = session[:result] || :new
   end
   
   after do
     session[:game] = @game
-    session[:result] = nil
+    session[:result] = @result
   end
   
   # These two routes are good examples of Sinatra syntax
@@ -23,6 +24,7 @@ class HangpersonApp < Sinatra::Base
   end
   
   get '/new' do
+    @result = :new
     erb :new
   end
   
@@ -55,29 +57,30 @@ class HangpersonApp < Sinatra::Base
   # Notice that the show.erb template expects to use the instance variables
   # wrong_guesses and word_with_guesses from @game.
   get '/show' do
-    result = @game.check_win_or_lose
-    session[:result] = result 
-    case result
+    @result = @game.check_win_or_lose
+    #session[:result] = @result 
+    case @result
     when :play; erb :show
-    when :win ; erb :win
-    when :lose; erb :lose
+    when :win ; redirect '/win'
+    when :lose; redirect '/lose'
+    else ;      redirect '/new'
     end
     #erb :show # You may change/remove this line
   end
   
   get '/win' do
-    if session[:result] == :win
+    if @result == :win
       erb :win 
     else
-      erb :new
+      redirect '/show'
     end
   end
   
   get '/lose' do
-    if session[:result] == :lose
+    if @result == :lose
       erb :lose 
     else
-      erb :new
+      redirect '/show'
     end 
   end
   
